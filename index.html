@@ -249,7 +249,8 @@ a{color:inherit}
 
 /* chips scroll (실제 HDS 동작): 필터 버튼 고정 오버레이 + 그 아래로 아이템이 가로 스크롤 */
 .chips-scrollwrap{position:relative;height:40px;width:100%}
-.chips-scrollinner{position:absolute;inset:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
+.chips-scrollinner{position:absolute;inset:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-ms-overflow-style:none}
+.chips-scrollinner::-webkit-scrollbar{display:none}
 .chips-scrolltrack{display:flex;gap:4px;padding-left:57px;width:max-content}
 .chips-fixed-filter{position:absolute;left:0;top:0;width:49px;height:40px;background:var(--demo-bg);z-index:2;display:flex;align-items:center}
 .chips-fixed-filter .chips-divider{position:absolute;left:48px;top:12px}
@@ -478,8 +479,8 @@ table.hds-table{width:100%;border-collapse:collapse;min-width:640px}
   <div class="tb-title"><span class="tb-dot"></span>HDS 다국어 대응 가이드</div>
   <div class="tb-g">
     <span class="tb-lbl">언어</span>
-    <button class="langbtn on" id="btn-ko" onclick="setLang('ko')">한국어</button>
-    <button class="langbtn" id="btn-en" onclick="setLang('en')">English</button>
+    <button class="langbtn" id="btn-ko" onclick="setLang('ko')">한국어</button>
+    <button class="langbtn on" id="btn-en" onclick="setLang('en')">English</button>
   </div>
 </div>
 
@@ -1386,7 +1387,7 @@ table.hds-table{width:100%;border-collapse:collapse;min-width:640px}
 <div class="foot">HDS 다국어 대응 가이드 · Confluence 기준 문서 기반 · 색상/간격/타이포그래피/아이콘은 Figma HDS 라이브러리 실측치 반영</div>
 
 <script>
-var lang='ko';
+var lang='en';
 function setLang(l){
   lang=l;
   document.querySelectorAll('.t[data-ko]').forEach(function(el){el.textContent=l==='ko'?el.dataset.ko:el.dataset.en});
@@ -1433,7 +1434,7 @@ function initResizers(){
 }
 
 document.addEventListener('DOMContentLoaded',function(){
-  setLang('ko');
+  setLang('en');
   initResizers();
 });
 </script>
