@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HDS 다국어 대응 가이드</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+button,input,select,textarea{font-family:inherit}
+html{-webkit-text-size-adjust:100%}
+
+:root{
+  /* HDS Theme tokens — Figma 실측값 */
+  --brand:        #0066FF;
+  --brand-tint:   rgba(0,102,255,.06);
+  --neutral-btn:  #292A2D;
+  --subtle-btn:   #70737C;
+  --selected:     #46474C;
+
+  --surface:      #FFFFFF;
+  --page:         #F7F7F8;
+  --ghost:        #F4F4F5;
+  --dim:          rgba(0,0,0,.25);
+
+  --ink100:       #171719;
+  --ink80:        rgba(23,23,25,.8);
+  --ink60:        rgba(23,23,25,.6);
+  --ink45:        rgba(23,23,25,.45);
+  --ink-disabled: rgba(23,23,25,.25);
+
+  --line-outline: #E1E2E4;
+  --line-strong:  #AEB0B6;
+  --line-heavy:   #70737C;
+  --line-layout:  #EAEBEC;
+
+  --hover:        rgba(0,0,0,.03);
+  --pressed:      rgba(0,0,0,.05);
+
+  --success:      #00BF40;
+  --warning:      #FF9200;
+  --error:        #FA2E43;
+  --info:         #0066FF;
+  --success-tint: rgba(0,191,64,.06);
+  --warning-tint: rgba(255,146,0,.06);
+  --error-tint:   rgba(250,46,67,.06);
+  --info-tint:    rgba(0,102,255,.06);
+  --demo-bg:      #FAFAFB;
+
+  --r-xs:4px; --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:20px; --r-full:900px;
+  --sh-dropdown:0 16px 16px -8px rgba(0,0,0,.1),0 4px 4px -4px rgba(0,0,0,.05);
+  --sh-modal:0 16px 32px -4px rgba(0,0,0,.1),0 4px 4px -4px rgba(0,0,0,.05);
+
+  /* rule category colors */
+  --cw:#1D4ED8;  --cwb:#EFF6FF;   /* row wrap */
+  --cs:#C2410C;  --csb:#FFF7ED;   /* horizontal scroll */
+  --ce:#166534;  --ceb:#F0FDF4;   /* auto expand */
+  --cf:#6D28D9;  --cfb:#F5F3FF;   /* fixed width */
+  --cb:#92400E;  --cbb:#FFFBEB;   /* line-break allowed */
+}
+
+body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:#EEEFF1;color:var(--ink100);font-size:14px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;padding-bottom:80px;overflow-x:hidden}
+
+a{color:inherit}
+
+/* ══════════ Top bar ══════════ */
+.topbar{
+  position:sticky;top:0;z-index:200;
+  display:flex;align-items:center;gap:14px;
+  padding:0 20px;height:56px;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line-outline);
+}
+.tb-title{font-size:14px;font-weight:800;letter-spacing:-.2px;
+  display:flex;align-items:center;gap:8px;margin-right:auto;white-space:nowrap}
+.tb-dot{width:8px;height:8px;border-radius:50%;background:var(--brand);flex-shrink:0}
+.tb-sep{width:1px;height:20px;background:var(--line-outline);flex-shrink:0}
+.tb-lbl{font-size:11px;font-weight:700;color:var(--ink45);letter-spacing:.4px;
+  text-transform:uppercase;white-space:nowrap}
+.tb-g{display:flex;align-items:center;gap:3px}
+.langbtn{
+  display:inline-flex;align-items:center;height:30px;padding:0 12px;
+  border-radius:var(--r-sm);border:1.5px solid var(--line-outline);
+  background:transparent;font-size:13px;font-weight:600;color:var(--ink60);
+  cursor:pointer;transition:all .12s;white-space:nowrap;
+}
+.langbtn:hover{border-color:var(--line-strong);color:var(--ink100)}
+.langbtn.on{background:var(--ink100);border-color:var(--ink100);color:#fff}
+
+/* ══════════ Page intro ══════════ */
+.wrap{max-width:1120px;margin:0 auto;padding:28px 20px 0}
+.intro{
+  background:var(--surface);border-radius:var(--r-lg);
+  border:1px solid var(--line-outline);padding:28px 28px 24px;margin-bottom:24px;
+}
+.intro p{font-size:14px;color:var(--ink60);line-height:1.7;max-width:760px}
+.intro .principles{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+@media (max-width:640px){.intro .principles{grid-template-columns:1fr}}
+.principle{background:var(--page);border-radius:var(--r-md);padding:14px 16px}
+.principle b{display:block;font-size:13px;font-weight:700;margin-bottom:4px}
+.principle span{font-size:12.5px;color:var(--ink60);line-height:1.6}
+.howto{
+  margin-top:18px;display:flex;align-items:center;gap:10px;
+  background:var(--info-tint);border:1px solid rgba(0,102,255,.18);
+  border-radius:var(--r-md);padding:12px 16px;font-size:12.5px;color:var(--ink80);
+}
+.howto b{color:var(--brand);font-weight:700}
+.howto-icon{display:flex;flex-shrink:0}
+
+/* ══════════ Card ══════════ */
+.card{
+  background:var(--surface);border-radius:var(--r-lg);
+  margin-bottom:16px;border:1px solid var(--line-outline);
+}
+.card-hd{display:flex;align-items:flex-start;gap:12px;padding:18px 22px;border-bottom:1px solid var(--line-layout)}
+.c-idx{
+  flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--page);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;color:var(--ink45);margin-top:1px;
+}
+.c-meta{flex:1;min-width:0}
+.c-name{font-size:15px;font-weight:800;letter-spacing:-.2px}
+.c-name small{font-weight:500;color:var(--ink45);font-size:12px;margin-left:6px}
+
+/* rule badges — 컴포넌트 이름 바로 아래, 규칙별 뱃지 */
+.rbadges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.rbadge{
+  display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 10px;
+  border-radius:var(--r-full);font-size:11.5px;font-weight:600;white-space:nowrap;
+  background:var(--page);color:var(--ink60);
+}
+.rbadge b{font-weight:800;color:var(--ink100)}
+.rbadge.wide{white-space:normal;height:auto;padding:4px 10px;line-height:1.5}
+.rbadge.rt-w{background:var(--cwb);color:var(--cw)}.rbadge.rt-w b{color:var(--cw)}
+.rbadge.rt-s{background:var(--csb);color:var(--cs)}.rbadge.rt-s b{color:var(--cs)}
+.rbadge.rt-e{background:var(--ceb);color:var(--ce)}.rbadge.rt-e b{color:var(--ce)}
+.rbadge.rt-f{background:var(--cfb);color:var(--cf)}.rbadge.rt-f b{color:var(--cf)}
+.rbadge.rt-b{background:var(--cbb);color:var(--cb)}.rbadge.rt-b b{color:var(--cb)}
+
+.c-sec{padding:18px 22px}
+.c-sec+.c-sec{border-top:1px solid var(--line-layout)}
+.sec-lbl{font-size:11px;font-weight:700;color:var(--ink45);letter-spacing:.4px;
+  text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sec-lbl .note{text-transform:none;font-weight:500;letter-spacing:0;color:var(--ink45);font-size:11.5px}
+
+.demo-row{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+
+/* ══════════ Resizable demo box (min-width 320px) ══════════ */
+.resize-box{
+  position:relative;border:1.5px dashed #CACDD3;border-radius:10px;
+  background:var(--demo-bg);padding:22px 28px 24px 18px;min-width:320px;max-width:100%;
+}
+.rb-tag{
+  position:absolute;top:-10px;left:14px;background:var(--demo-bg);padding:0 6px;
+  font-size:10.5px;font-weight:700;color:#94979E;letter-spacing:.2px;white-space:nowrap;
+}
+.resize-handle{
+  position:absolute;top:0;right:0;bottom:0;width:20px;
+  cursor:ew-resize;display:flex;align-items:center;justify-content:center;
+  touch-action:none;
+}
+.resize-handle::before{content:'';width:4px;height:30px;border-radius:2px;background:#CACDD3;transition:background .12s}
+.resize-handle:hover::before,.resize-handle.dragging::before{background:var(--brand)}
+.rb-badge{
+  position:absolute;bottom:-10px;right:14px;background:var(--ink100);color:#fff;
+  font-size:10px;font-weight:700;padding:2px 8px;border-radius:var(--r-full);
+  font-variant-numeric:tabular-nums;letter-spacing:.2px;
+}
+.rb-content{width:100%;container-type:inline-size}
+.rb-content.of-visible{overflow:visible}
+
+/* ══════════ HDS Badge ══════════ */
+.badge{
+  display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
+  height:20px;min-width:20px;padding:0 6px;border-radius:var(--r-full);
+  font-size:12px;font-weight:600;white-space:nowrap;letter-spacing:-.2px;line-height:1;
+}
+.bd-primary{background:var(--line-heavy);color:#fff}
+.bd-secondary{background:var(--line-strong);color:#fff}
+.bd-brand{background:var(--brand-tint);color:var(--brand)}
+.bd-success{background:var(--success-tint);color:var(--success)}
+.bd-warning{background:var(--warning-tint);color:var(--warning)}
+.bd-error{background:var(--error-tint);color:var(--error)}
+.bd-info{background:var(--info-tint);color:var(--info)}
+.bd-normal{background:rgba(23,23,25,.06);color:var(--ink45)}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px}
+
+/* ══════════ HDS Button ══════════ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;flex-shrink:0;
+  height:40px;padding:0 16px;border-radius:var(--r-sm);
+  font-size:14px;font-weight:500;cursor:pointer;border:none;
+  white-space:nowrap;letter-spacing:-.3px;transition:opacity .1s;
+}
+.btn:hover{opacity:.88}
+.btn-primary{background:var(--brand);color:#fff}
+.btn-neutral{background:var(--neutral-btn);color:#fff}
+.btn-subtle{background:var(--subtle-btn);color:#fff}
+.btn-outline{background:var(--surface);color:var(--ink100);border:1px solid var(--line-outline)}
+.btn-lg{height:56px;border-radius:var(--r-md);padding:0 20px;font-size:16px}
+.btn-fill{flex:1;min-width:0}
+.btn-row{display:flex;flex-wrap:wrap;gap:8px}
+.btn-row-fill{display:flex;gap:8px;width:100%}
+
+/* ══════════ HDS Checkbox / Radio ══════════ */
+.check-row,.radio-row{display:flex;flex-wrap:wrap;gap:10px 20px}
+.check-item,.radio-item{display:flex;align-items:center;gap:8px;cursor:pointer;flex-shrink:0}
+.check-box{
+  position:relative;width:16px;height:16px;border-radius:var(--r-xs);border:1px solid var(--line-strong);
+  background:var(--surface);flex-shrink:0;display:flex;align-items:center;justify-content:center;
+}
+.check-box svg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:none}
+.check-item.on .check-box{background:var(--selected);border-color:var(--selected)}
+.check-item.on .check-box svg{display:block}
+.check-lbl{font-size:16px;color:var(--ink100)}
+.check-item.on .check-lbl{font-weight:600}
+.check-item.dis{opacity:.3;cursor:default}
+
+.radio-dot{
+  width:16px;height:16px;border-radius:var(--r-full);border:1px solid var(--line-strong);
+  background:var(--surface);flex-shrink:0;display:flex;align-items:center;justify-content:center;
+}
+.radio-item.on .radio-dot{background:var(--selected);border-color:var(--selected)}
+.radio-item.on .radio-dot::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff}
+.radio-lbl{font-size:14px;color:var(--ink100)}
+.radio-item.on .radio-lbl{font-weight:600}
+
+/* ══════════ HDS Chips / Chips-item / Tag ══════════ */
+.filter-btn{
+  flex-shrink:0;width:40px;height:40px;border-radius:var(--r-full);
+  background:var(--surface);border:1px solid var(--line-outline);
+  display:flex;align-items:center;justify-content:center;color:var(--ink80);
+}
+.chips-row{display:flex;align-items:center;gap:8px;width:100%}
+.chips-filtergroup{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.chips-divider{width:1px;height:16px;background:var(--line-strong);flex-shrink:0}
+.chip{
+  display:inline-flex;align-items:center;gap:4px;flex-shrink:0;
+  height:40px;padding:0 12px;border-radius:var(--r-full);
+  font-size:14px;color:var(--ink80);cursor:pointer;
+  border:1px solid var(--line-outline);background:var(--surface);white-space:nowrap;
+}
+.chip.on{background:var(--selected);border-color:var(--selected);color:#fff}
+.chip-sm{height:32px;padding:0 12px;gap:2px;font-size:14px}
+.chips-wrap-row{display:flex;flex-wrap:wrap;gap:4px;flex:1;min-width:0}
+
+/* chips scroll (실제 HDS 동작): 필터 버튼 고정 오버레이 + 그 아래로 아이템이 가로 스크롤 */
+.chips-scrollwrap{position:relative;height:40px;width:100%}
+.chips-scrollinner{position:absolute;inset:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
+.chips-scrolltrack{display:flex;gap:4px;padding-left:57px;width:max-content}
+.chips-fixed-filter{position:absolute;left:0;top:0;width:49px;height:40px;background:var(--demo-bg);z-index:2;display:flex;align-items:center}
+.chips-fixed-filter .chips-divider{position:absolute;left:48px;top:12px}
+
+.tag{
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;flex-shrink:0;
+  height:32px;padding:0 12px;border-radius:var(--r-full);
+  background:var(--pressed);color:var(--ink80);font-size:14px;white-space:nowrap;
+}
+.tag-row{display:flex;flex-wrap:wrap;gap:4px}
+
+/* ══════════ HDS Input ══════════ */
+.input-tb{
+  display:inline-flex;align-items:stretch;flex:1;min-width:160px;
+  border:1px solid var(--line-outline);border-radius:var(--r-sm);
+  background:var(--surface);height:40px;overflow:hidden;
+}
+.input-tb input{
+  flex:1;min-width:0;border:none;outline:none;background:transparent;
+  padding:0 12px;font-size:16px;color:var(--ink100);
+}
+.input-tb input::placeholder{color:var(--ink45)}
+.input-tb .trail{
+  display:flex;align-items:center;flex-shrink:0;padding:0 0 0 12px;margin-right:12px;
+  border-left:1px solid var(--line-layout);font-size:14px;color:var(--ink100);
+  white-space:nowrap;cursor:pointer;
+}
+
+/* ══════════ HDS Segmented Control ══════════ */
+.segctrl{display:flex;padding:4px;gap:2px;background:var(--page);border-radius:var(--r-sm);width:100%}
+.seg-item{
+  flex:1;display:flex;align-items:center;justify-content:center;text-align:center;
+  min-height:32px;padding:6px 10px;border-radius:6px;font-size:14px;color:var(--ink60);line-height:1.3;
+}
+.seg-item.on{background:var(--surface);color:var(--ink100);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+
+/* ══════════ HDS Select / Select-multiple / Dropdown ══════════ */
+.select-wrap{position:relative;display:inline-block;max-width:100%}
+.select-box{
+  display:flex;align-items:center;gap:8px;height:40px;padding:0 12px;
+  border:1px solid var(--line-outline);border-radius:var(--r-sm);background:var(--surface);
+  width:220px;max-width:100%;cursor:pointer;
+}
+.select-box .sv{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-size:16px;color:var(--ink100)}
+.select-box svg{flex-shrink:0}
+.select-panel{
+  display:none;position:absolute;top:calc(100% + 6px);left:0;width:220px;max-width:100%;
+  background:var(--surface);border:1px solid var(--line-outline);border-radius:var(--r-sm);
+  box-shadow:var(--sh-dropdown);padding:6px;z-index:20;
+}
+.select-wrap.open .select-panel{display:block}
+
+.selmulti-box{
+  display:flex;align-items:center;gap:8px;padding:8px 12px;min-height:40px;
+  border:1px solid var(--line-outline);border-radius:var(--r-sm);background:var(--surface);width:100%;
+}
+.selmulti-chips{flex:1;min-width:0;display:flex;flex-wrap:wrap;gap:8px}
+.sm-chip{
+  display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px;
+  border-radius:var(--r-full);background:var(--pressed);font-size:12px;color:var(--ink100);white-space:nowrap;
+}
+.sm-chip svg{flex-shrink:0}
+.sm-trail{flex-shrink:0}
+
+.dropdown{
+  width:220px;max-width:100%;background:var(--surface);border:1px solid var(--line-outline);
+  border-radius:var(--r-sm);box-shadow:var(--sh-dropdown);padding:6px;
+}
+.dd-item{
+  display:block;padding:10px 12px;border-radius:var(--r-xs);font-size:14px;color:var(--ink100);
+  cursor:pointer;line-height:1.5;
+}
+.dd-item.hover{background:var(--hover)}
+
+/* ══════════ HDS Switch (exact Figma SVG states) ══════════ */
+.switch-row{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.sw-svg{flex-shrink:0;display:block}
+.sw-svg.disabled{opacity:.3}
+.switch-lbl{font-size:16px;color:var(--ink-disabled)}
+.switch-row.on{}
+.switch-row.on .switch-lbl{color:var(--ink100)}
+.switch-group{display:flex;flex-wrap:wrap;gap:10px 22px}
+
+/* ══════════ HDS Tabs ══════════ */
+.tabs{display:flex;border-bottom:1px solid var(--line-layout);width:100%}
+.tabs.no-scroll{overflow:hidden}
+.tabs.scrollable{overflow-x:auto;scrollbar-width:thin}
+.tab-item{
+  flex-shrink:0;padding:16px 0;margin-right:32px;font-size:16px;color:var(--ink60);
+  border-bottom:3px solid transparent;white-space:nowrap;cursor:pointer;
+}
+.tab-item.on{color:var(--ink100);font-weight:700;border-bottom-color:var(--ink100)}
+.tabs-overflow-wrap{display:flex;align-items:center;width:100%;gap:4px}
+.tab-arrow{
+  flex-shrink:0;width:28px;height:28px;border-radius:var(--r-sm);display:flex;
+  align-items:center;justify-content:center;color:var(--ink60);cursor:pointer;
+}
+.tab-arrow:hover{background:var(--hover)}
+
+/* ══════════ HDS Toast (한 문장, 균일 굵기) ══════════ */
+.toast{
+  display:flex;gap:8px;width:400px;max-width:100%;padding:12px;border-radius:var(--r-sm);
+  background:rgba(255,255,255,.88);align-items:center;
+}
+.toast-ic{flex-shrink:0;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;color:#fff}
+.toast-text{font-size:16px;color:var(--ink100);line-height:1.6;font-weight:400}
+.toast.tst-success{background:var(--success-tint)}.toast.tst-success .toast-ic{background:var(--success)}
+.toast.tst-warning{background:var(--warning-tint)}.toast.tst-warning .toast-ic{background:var(--warning)}
+.toast.tst-error{background:var(--error-tint)}.toast.tst-error .toast-ic{background:var(--error)}
+.toast.tst-info{background:var(--info-tint)}.toast.tst-info .toast-ic{background:var(--info)}
+.toast.tst-normal .toast-ic{background:transparent;border:1.5px solid var(--ink60);color:var(--ink60);width:16px;height:16px;font-size:10px}
+
+/* ══════════ HDS Tooltip (가로 배치, 화살표, 단어 1개) ══════════ */
+.tt-demo{display:inline-flex;align-items:center;gap:0}
+.tt-trigger{
+  display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;flex-shrink:0;
+  background:var(--ghost);border-radius:var(--r-full);color:var(--ink60);
+}
+.tt-bubble{
+  display:inline-flex;background:var(--ink100);color:#fff;font-size:14px;font-weight:500;
+  padding:2px 6px;border-radius:var(--r-xs);white-space:nowrap;position:relative;margin-left:8px;
+}
+.tt-bubble::after{
+  content:'';position:absolute;right:100%;top:50%;transform:translateY(-50%);
+  width:0;height:0;border:4px solid transparent;border-right-color:var(--ink100);
+}
+
+/* ══════════ HDS Accordion (실제 anatomy) ══════════ */
+.accordion{border:1px solid var(--line-outline);border-radius:var(--r-sm);overflow:hidden;width:100%}
+.acc-hd{
+  display:grid;grid-template-columns:max-content 1fr max-content max-content;
+  grid-template-areas:"cat title meta icons";
+  align-items:center;column-gap:16px;padding:16px 6px 16px 20px;cursor:pointer;background:var(--surface);
+}
+.acc-hd.open{background:var(--page)}
+.acc-cat{grid-area:cat;justify-self:start}
+.acc-title{grid-area:title;min-width:0;font-size:16px;font-weight:700;color:var(--ink100);line-height:1.5}
+.acc-meta{grid-area:meta;display:flex;align-items:center;gap:16px;justify-self:start}
+.acc-time{font-size:12px;color:var(--ink45);white-space:nowrap}
+.acc-icons{grid-area:icons;display:flex;align-items:center;gap:2px;color:var(--ink45)}
+.acc-icon-btn{width:22px;height:22px;border-radius:var(--r-xs);display:flex;align-items:center;justify-content:center}
+.acc-body{padding:20px;border-top:1px solid var(--line-outline);background:var(--surface);
+  font-size:16px;color:var(--ink80);line-height:1.6}
+
+/* ══════════ HDS Board (카테고리 뱃지 통일) ══════════ */
+.board-list{display:flex;flex-direction:column;gap:8px;width:100%}
+.board-row{
+  display:grid;grid-template-columns:max-content 1fr max-content;
+  grid-template-areas:"cat title time";
+  align-items:center;column-gap:24px;padding:16px 20px;border:1px solid var(--line-outline);
+  border-radius:var(--r-sm);background:var(--surface);
+}
+.board-cat{grid-area:cat;justify-self:start}
+.board-title{grid-area:title;min-width:0;font-size:16px;font-weight:700;color:var(--ink100);line-height:1.5}
+.board-time{grid-area:time;font-size:12px;color:var(--ink45);white-space:nowrap}
+
+/* 컨테이너 767px 이하 — 공지/제목+아이콘/뱃지+날짜를 상하 3단으로 배치 */
+@container (max-width:767px){
+  .acc-hd{
+    grid-template-columns:1fr max-content;
+    grid-template-areas:"cat cat" "title icons" "meta meta";
+    row-gap:8px;
+  }
+  .acc-icons{justify-self:end}
+
+  .board-row{
+    grid-template-columns:1fr;
+    grid-template-areas:"cat" "title" "time";
+    row-gap:6px;
+  }
+}
+
+/* ══════════ HDS Form (상하 배치) ══════════ */
+.form-stack{display:flex;flex-direction:column;gap:20px;width:100%}
+.form-set{display:flex;flex-direction:column;gap:8px;width:100%}
+.form-label{font-size:16px;font-weight:500;color:var(--ink100);display:flex;align-items:center;gap:4px}
+.form-req{color:var(--error);font-weight:700;font-size:14px}
+.form-input{
+  height:40px;padding:0 12px;border:1px solid var(--line-outline);border-radius:var(--r-sm);
+  background:var(--surface);font-size:16px;color:var(--ink45);display:flex;align-items:center;width:100%;
+}
+
+/* Form — 레이블-인풋 좌우 배치 (가장 긴 레이블 기준 정렬) */
+.form-grid{display:grid;grid-template-columns:minmax(min-content,45%) 1fr;gap:16px 20px;align-items:center;width:100%}
+.form-grid .form-label{white-space:normal;word-break:keep-all;line-height:1.4}
+.form-grid .form-input{width:100%}
+
+/* ══════════ HDS Modal ══════════ */
+.modal-preview-static{width:480px;max-width:100%;background:var(--surface);border:1px solid var(--line-outline);
+  border-radius:var(--r-sm);box-shadow:var(--sh-modal)}
+.modal-hd{display:flex;align-items:flex-start;gap:16px;padding:20px 20px 20px}
+.modal-title{flex:1;font-size:18px;font-weight:700;color:var(--ink100);line-height:1.6}
+.modal-close{width:28px;height:28px;border-radius:var(--r-sm);display:flex;align-items:center;
+  justify-content:center;color:var(--ink60);cursor:pointer;flex-shrink:0;background:none;border:none}
+.modal-close:hover{background:var(--hover)}
+.modal-bd{padding:0 20px 20px;color:var(--ink60);font-size:13px}
+.modal-ft{display:flex;gap:8px;padding:20px;border-top:1px solid var(--line-outline)}
+.modal-ft .btn-outline{flex-shrink:0}
+.modal-ft .btn-primary{flex:1}
+
+/* ══════════ HDS Table ══════════ */
+.table-wrap{border:1px solid var(--line-outline);border-radius:var(--r-sm);width:100%}
+.table-scroll{overflow-x:auto}
+table.hds-table{width:100%;border-collapse:collapse;min-width:640px}
+.hds-table th{
+  background:var(--page);text-align:left;font-size:14px;font-weight:400;color:var(--ink60);
+  padding:12px 20px;border-bottom:1px solid var(--line-layout);white-space:nowrap;
+}
+.hds-table td{padding:16px 20px;border-bottom:1px solid var(--line-layout);font-size:16px;color:var(--ink100);
+  vertical-align:middle}
+.hds-table tr:last-child td{border-bottom:none}
+.hds-table.expand th,.hds-table.expand td{white-space:normal}
+.hds-table.expand{min-width:0}
+.td-name{font-weight:700}
+.td-sub{font-size:12px;color:var(--ink45);margin-top:2px}
+.td-badges{display:flex;flex-wrap:wrap;gap:4px}
+
+.foot{max-width:1120px;margin:32px auto 0;padding:0 20px;font-size:12px;color:var(--ink45);text-align:center}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-title"><span class="tb-dot"></span>HDS 다국어 대응 가이드</div>
+  <div class="tb-g">
+    <span class="tb-lbl">언어</span>
+    <button class="langbtn on" id="btn-ko" onclick="setLang('ko')">한국어</button>
+    <button class="langbtn" id="btn-en" onclick="setLang('en')">English</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="intro">
+    <p>언어 전환에 따른 텍스트 길이 변화로 인해 레이아웃에 영향이 없도록 하는 컴포넌트별 대응 가이드입니다.</p>
+    <div class="principles">
+      <div class="principle"><b>고정 너비 금지</b><span>텍스트가 들어가는 모든 컨테이너는 고정 너비가 아닌, 텍스트 길이에 따라 늘어날 수 있는 구조로 설계합니다. 예외가 필요한 경우 처리 규칙을 정의합니다.</span></div>
+      <div class="principle"><b>번역 테스트</b><span>Figma의 번역 기능으로 언어 전환 후 컴포넌트 규칙대로 레이아웃이 유지되는지 확인합니다. 예외가 필요한 경우 처리 규칙을 정의합니다.</span></div>
+    </div>
+    <div class="howto">
+      <span class="howto-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10Z" fill="#0066FF"/><path d="M10 13.3333V10M10 6.66667H10.0083" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></span>
+      <span><b>사용법</b> — 점선 박스 우측 핸들 드래그로 너비 변경(최소 320px) · 우측 하단 배지에서 실시간 px 확인 · 상단 언어 토글로 한/영 전환</span>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 1. Badge ════════════════════ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="c-idx">1</div>
+      <div class="c-meta">
+        <div class="c-name">Badge</div>
+        <div class="rbadges">
+          <span class="rbadge">줄바꿈 <b>❌ 금지</b></span>
+          <span class="rbadge">넘침 처리 <b>너비 확장</b></span>
+          <span class="rbadge rt-w wide">너비 · <b>단일: 자동 확장 · 인라인: row wrap 허용</b></span>
+          <span class="rbadge">비고 <b>번역 줄임 권장</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">단일 · 자동 확장</div>
+      <div class="resize-box" data-min="320" style="width:fit-content">
+        <span class="rb-tag">단일</span>
+        <div class="rb-content of-visible">
+          <span class="badge bd-warning t" data-ko="마감임박" data-en="Closing Soon">마감임박</span>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">인라인 · row wrap 허용</div>
+      <div class="resize-box" data-min="320" style="width:360px">
+        <span class="rb-tag">인라인 (콘텐츠 카드 배지)</span>
+        <div class="rb-content of-visible">
+          <div class="badge-row">
+            <span class="badge bd-brand t" data-ko="신규 강좌" data-en="New Course">신규 강좌</span>
+            <span class="badge bd-error t" data-ko="마감임박" data-en="Closing Soon">마감임박</span>
+            <span class="badge bd-success t" data-ko="인기" data-en="Popular Pick">인기</span>
+            <span class="badge bd-info t" data-ko="얼리버드" data-en="Early Bird Discount">얼리버드</span>
+            <span class="badge bd-normal t" data-ko="수료증 발급" data-en="Certificate Provided">수료증 발급</span>
+          </div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 2. Button ════════════════════ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="c-idx">2</div>
+      <div class="c-meta">
+        <div class="c-name">Button</div>
+        <div class="rbadges">
+          <span class="rbadge">줄바꿈 <b>❌ 금지</b></span>
+          <span class="rbadge">넘침 처리 <b>너비 확장</b></span>
+          <span class="rbadge rt-e wide">너비 · <b>단일: 자동 확장 또는 너비 고정 · 인라인: row wrap 허용</b></span>
+          <span class="rbadge">비고 <b>번역 줄임 권장</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">단일 · 자동 확장</div>
+      <div class="resize-box" data-min="320" style="width:fit-content">
+        <span class="rb-tag">자동 확장</span>
+        <div class="rb-content of-visible">
+          <button class="btn btn-primary t" data-ko="확인" data-en="Confirm">확인</button>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">단일 · 너비 고정 <span class="note">— 버튼 width는 fill(컨테이너에 맞춰 균등 확장), 간격 8px</span></div>
+      <div class="resize-box" data-min="320" style="width:360px">
+        <span class="rb-tag">너비 고정 · fill</span>
+        <div class="rb-content of-visible">
+          <div class="btn-row-fill">
+            <button class="btn btn-outline btn-fill t" data-ko="취소" data-en="Cancel">취소</button>
+            <button class="btn btn-primary btn-fill t" data-ko="확인" data-en="Confirm">확인</button>
+          </div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">인라인 · row wrap 허용</div>
+      <div class="resize-box" data-min="320" style="width:400px">
+        <span class="rb-tag">인라인 툴바</span>
+        <div class="rb-content of-visible">
+          <div class="btn-row">
+            <button class="btn btn-primary t" data-ko="학습자 추가" data-en="Add Learner">학습자 추가</button>
+            <button class="btn btn-neutral t" data-ko="일괄 등록" data-en="Batch Registration">일괄 등록</button>
+            <button class="btn btn-outline t" data-ko="내보내기" data-en="Export Data">내보내기</button>
+          </div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 3. Checkbox ════════════════════ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="c-idx">3</div>
+      <div class="c-meta">
+        <div class="c-name">Checkbox</div>
+        <div class="rbadges">
+          <span class="rbadge">줄바꿈 <b>🟢 허용</b></span>
+          <span class="rbadge rt-b wide">너비 · <b>자동 확장 또는 row wrap 허용</b></span>
+          <span class="rbadge">비고 <b>번역 줄임 권장</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">단일 · 줄바꿈 허용</div>
+      <div class="resize-box" data-min="320" style="width:fit-content">
+        <span class="rb-tag">단일</span>
+        <div class="rb-content of-visible">
+          <label class="check-item on">
+            <span class="check-box"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 3L4.5 8.5L2 6" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="check-lbl t" data-ko="전체 동의합니다" data-en="I agree to all terms and conditions">전체 동의합니다</span>
+          </label>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">인라인 그룹 · row wrap 허용</div>
+      <div class="resize-box" data-min="320" style="width:420px">
+        <span class="rb-tag">인라인</span>
+        <div class="rb-content of-visible">
+          <div class="check-row">
+            <label class="check-item on"><span class="check-box"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 3L4.5 8.5L2 6" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl t" data-ko="이메일 알림" data-en="Email Notifications">이메일 알림</span></label>
+            <label class="check-item"><span class="check-box"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 3L4.5 8.5L2 6" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl t" data-ko="SMS 알림" data-en="SMS Notifications">SMS 알림</span></label>
+            <label class="check-item on"><span class="check-box"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 3L4.5 8.5L2 6" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl t" data-ko="앱 푸시 알림" data-en="App Push Notifications">앱 푸시 알림</span></label>
+            <label class="check-item dis"><span class="check-box"></span><span class="check-lbl t" data-ko="마케팅 정보 수신 동의" data-en="Marketing Communications Consent">마케팅 정보 수신 동의</span></label>
+          </div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 4. Chips ════════════════════ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="c-idx">4</div>
+      <div class="c-meta">
+        <div class="c-name">Chips</div>
+        <div class="rbadges">
+          <span class="rbadge">줄바꿈 <b>❌ 금지</b></span>
+          <span class="rbadge">넘침 처리 <b>너비 확장</b></span>
+          <span class="rbadge rt-e wide">너비 · <b>자동 확장 또는 가로 스크롤 활성화</b></span>
+          <span class="rbadge">비고 <b>번역 줄임 권장</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">자동 확장 · 컨테이너(최소 320px)보다 컴포넌트가 작아 스크롤/줄바꿈이 필요 없는 경우</div>
+      <div class="resize-box" data-min="320" style="width:320px">
+        <span class="rb-tag">확장 · 스크롤 불필요</span>
+        <div class="rb-content of-visible">
+          <div class="chips-row">
+            <div class="chips-filtergroup">
+              <div class="filter-btn">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5H17M6 10H14M9 15H11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              </div>
+              <div class="chips-divider"></div>
+            </div>
+            <div class="chips-wrap-row">
+              <div class="chip on t" data-ko="전체" data-en="All">전체</div>
+              <div class="chip t" data-ko="이번 달" data-en="This Month">이번 달</div>
+            </div>
+          </div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">가로 스크롤 (XS · 필터 버튼 고정, 아이템이 그 아래로 스크롤)</div>
+      <div class="resize-box" data-min="320" style="width:340px">
+        <span class="rb-tag">스크롤 · 필터 고정</span>
+        <div class="rb-content of-visible">
+          <div class="chips-scrollwrap">
+            <div class="chips-scrollinner">
+              <div class="chips-scrolltrack">
+                <div class="chip on t" data-ko="전체" data-en="All">전체</div>
+                <div class="chip t" data-ko="이번 달" data-en="This Month">이번 달</div>
+                <div class="chip t" data-ko="최근 3개월" data-en="Last 3 Months">최근 3개월</div>
+                <div class="chip t" data-ko="올해" data-en="This Year">올해</div>
+                <div class="chip t" data-ko="직접 설정" data-en="Custom Range">직접 설정</div>
+              </div>
+            </div>
+            <div class="chips-fixed-filter">
+              <div class="filter-btn">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5H17M6 10H14M9 15H11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              </div>
+              <div class="chips-divider"></div>
+            </div>
+          </div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 5. Chips-Item ════════════════════ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="c-idx">5</div>
+      <div class="c-meta">
+        <div class="c-name">Chips-Item</div>
+        <div class="rbadges">
+          <span class="rbadge">줄바꿈 <b>❌ 금지</b></span>
+          <span class="rbadge">넘침 처리 <b>너비 확장</b></span>
+          <span class="rbadge rt-w wide">너비 · <b>단일: 자동 확장 · 인라인: row wrap 허용</b></span>
+          <span class="rbadge">비고 <b>번역 줄임 권장</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">단일 · 자동 확장</div>
+      <div class="resize-box" data-min="320" style="width:fit-content">
+        <span class="rb-tag">단일 (option)</span>
+        <div class="rb-content of-visible">
+          <div class="chip chip-sm on t" data-ko="무료 강좌만 보기" data-en="Show Free Courses Only">무료 강좌만 보기</div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">인라인 · row wrap 허용 (필터 모달 내부)</div>
+      <div class="resize-box" data-min="320" style="width:420px">
+        <span class="rb-tag">인라인</span>
+        <div class="rb-content of-visible">
+          <div class="chips-wrap-row" style="flex:none">
+            <div class="chip chip-sm on t" data-ko="1분기" data-en="Q1 · Jan–Mar">1분기</div>
+            <div class="chip chip-sm t" data-ko="2분기" data-en="Q2 · Apr–Jun">2분기</div>
+            <div class="chip chip-sm t" data-ko="3분기" data-en="Q3 · Jul–Sep">3분기</div>
+            <div class="chip chip-sm t" data-ko="4분기" data-en="Q4 · Oct–Dec">4분기</div>
+            <div class="chip chip-sm t" data-ko="연간 전체" data-en="Full Year Overview">연간 전체</div>
+          </div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 6. Tag ════════════════════ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="c-idx">6</div>
+      <div class="c-meta">
+        <div class="c-name">Tag</div>
+        <div class="rbadges">
+          <span class="rbadge">줄바꿈 <b>❌ 금지</b></span>
+          <span class="rbadge">넘침 처리 <b>너비 확장</b></span>
+          <span class="rbadge rt-w wide">너비 · <b>단일: 자동 확장 · 인라인: row wrap 허용</b></span>
+          <span class="rbadge">비고 <b>번역 줄임 권장</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">단일 · 자동 확장</div>
+      <div class="resize-box" data-min="320" style="width:fit-content">
+        <span class="rb-tag">단일</span>
+        <div class="rb-content of-visible">
+          <div class="tag t" data-ko="우수 수료자" data-en="Outstanding Graduate">우수 수료자</div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">인라인 · row wrap 허용 (보유 스킬 목록)</div>
+      <div class="resize-box" data-min="320" style="width:420px">
+        <span class="rb-tag">인라인</span>
+        <div class="rb-content of-visible">
+          <div class="tag-row">
+            <div class="tag t" data-ko="리더십" data-en="Leadership">리더십</div>
+            <div class="tag t" data-ko="데이터 분석" data-en="Data Analysis">데이터 분석</div>
+            <div class="tag t" data-ko="프로젝트 관리" data-en="Project Management">프로젝트 관리</div>
+            <div class="tag t" data-ko="커뮤니케이션" data-en="Communication Skills">커뮤니케이션</div>
+          </div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 7. Input (Trailing-Button) ════════════════════ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="c-idx">7</div>
+      <div class="c-meta">
+        <div class="c-name">Input <small>Trailing-Button</small></div>
+        <div class="rbadges">
+          <span class="rbadge">줄바꿈 <b>❌ 금지</b></span>
+          <span class="rbadge">넘침 처리 <b>너비 확장</b></span>
+          <span class="rbadge rt-e wide">너비 · <b>자동 확장</b></span>
+          <span class="rbadge">비고 <b>번역 줄임 권장</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">자동 확장 · 트레일링 버튼 텍스트 길이에 대응</div>
+      <div class="resize-box" data-min="320" style="width:340px">
+        <span class="rb-tag">단일</span>
+        <div class="rb-content of-visible">
+          <div class="input-tb">
+            <input type="text" class="ph" data-ko-p="학습자 이름, 이메일 검색" data-en-p="Search by name or email" placeholder="학습자 이름, 이메일 검색">
+            <div class="trail t" data-ko="검색" data-en="Search">검색</div>
+          </div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 8. Radio ════════════════════ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="c-idx">8</div>
+      <div class="c-meta">
+        <div class="c-name">Radio</div>
+        <div class="rbadges">
+          <span class="rbadge">줄바꿈 <b>🟢 허용</b></span>
+          <span class="rbadge rt-b wide">너비 · <b>자동 확장, row wrap 허용</b></span>
+          <span class="rbadge">비고 <b>번역 줄임 권장</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">그룹 · row wrap 허용</div>
+      <div class="resize-box" data-min="320" style="width:420px">
+        <span class="rb-tag">인라인</span>
+        <div class="rb-content of-visible">
+          <div class="radio-row">
+            <label class="radio-item on"><span class="radio-dot"></span><span class="radio-lbl t" data-ko="수강생" data-en="Student">수강생</span></label>
+            <label class="radio-item"><span class="radio-dot"></span><span class="radio-lbl t" data-ko="강사" data-en="Instructor">강사</span></label>
+            <label class="radio-item"><span class="radio-dot"></span><span class="radio-lbl t" data-ko="관리자" data-en="Administrator">관리자</span></label>
+            <label class="radio-item"><span class="radio-dot"></span><span class="radio-lbl t" data-ko="현장 실습 참여자" data-en="Field Practicum Participant">현장 실습 참여자</span></label>
+          </div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 9. Segmented Control ════════════════════ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="c-idx">9</div>
+      <div class="c-meta">
+        <div class="c-name">Segmented Control</div>
+        <div class="rbadges">
+          <span class="rbadge">줄바꿈 <b>🟢 허용</b></span>
+          <span class="rbadge rt-e wide">너비 · <b>세그먼트 너비 균등 확장</b></span>
+          <span class="rbadge">비고 <b>번역 줄임 권장</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">세그먼트 균등 확장 · 컨테이너 너비에 맞춰 각 항목이 동일 비율로 늘어남</div>
+      <div class="resize-box" data-min="320" style="width:380px">
+        <span class="rb-tag">single</span>
+        <div class="rb-content of-visible">
+          <div class="segctrl">
+            <div class="seg-item on t" data-ko="목록 보기" data-en="List View">목록 보기</div>
+            <div class="seg-item t" data-ko="카드 보기" data-en="Card View">카드 보기</div>
+            <div class="seg-item t" data-ko="통계 대시보드" data-en="Statistics Dashboard">통계 대시보드</div>
+          </div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 10. Select ════════════════════ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="c-idx">10</div>
+      <div class="c-meta">
+        <div class="c-name">Select</div>
+        <div class="rbadges">
+          <span class="rbadge">줄바꿈 <b>❌ 금지</b></span>
+          <span class="rbadge">넘침 처리 <b>말줄임(…) 처리</b></span>
+          <span class="rbadge rt-f wide">너비 · <b>너비 고정</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">너비 고정 · 넘치면 말줄임(…) 처리 · 클릭 시 드롭다운 오픈</div>
+      <div class="demo-row">
+        <div class="select-wrap" id="selectDemo">
+          <div class="select-box" onclick="toggleSelectDemo(event)">
+            <span class="sv t" data-ko="등록일 순" data-en="Sort by Registration Date">등록일 순</span>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M5.53726 7.75813C5.8164 8.08045 6.31642 8.08045 6.59556 7.75813L8.96044 5.0274C9.35305 4.57405 9.03102 3.86914 8.43129 3.86914H3.70152C3.10179 3.86914 2.77976 4.57405 3.17237 5.0274L5.53726 7.75813Z" fill="#171719" fill-opacity="0.8"/></svg>
+          </div>
+          <div class="select-panel">
+            <div class="dd-item hover t" data-ko="등록일 순" data-en="Sort by Registration Date">등록일 순</div>
+            <div class="dd-item t" data-ko="이름 순" data-en="Name (A–Z)">이름 순</div>
+            <div class="dd-item t" data-ko="학습 진도 순" data-en="Learning Progress">학습 진도 순</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 11. Select-Multiple ════════════════════ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="c-idx">11</div>
+      <div class="c-meta">
+        <div class="c-name">Select-Multiple <small>Option</small></div>
+        <div class="rbadges">
+          <span class="rbadge">줄바꿈 <b>❌ 금지</b></span>
+          <span class="rbadge">넘침 처리 <b>너비 확장</b></span>
+          <span class="rbadge rt-w wide">너비 · <b>row wrap</b></span>
+          <span class="rbadge">비고 <b>번역 줄임 권장</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">선택된 옵션 · 내부 chip은 row wrap · x 아이콘은 텍스트 우측</div>
+      <div class="resize-box" data-min="320" style="width:320px">
+        <span class="rb-tag">filled</span>
+        <div class="rb-content of-visible">
+          <div class="selmulti-box">
+            <div class="selmulti-chips">
+              <span class="sm-chip"><span class="t" data-ko="리더십" data-en="Leadership">리더십</span><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M9 3L3 9M3 3L9 9" stroke="#171719" stroke-opacity="0.4" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              <span class="sm-chip"><span class="t" data-ko="데이터 분석" data-en="Data Analysis">데이터 분석</span><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M9 3L3 9M3 3L9 9" stroke="#171719" stroke-opacity="0.4" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              <span class="sm-chip"><span class="t" data-ko="프로젝트 관리" data-en="Project Management">프로젝트 관리</span><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M9 3L3 9M3 3L9 9" stroke="#171719" stroke-opacity="0.4" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+            </div>
+            <svg class="sm-trail" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M5.53726 7.75813C5.8164 8.08045 6.31642 8.08045 6.59556 7.75813L8.96044 5.0274C9.35305 4.57405 9.03102 3.86914 8.43129 3.86914H3.70152C3.10179 3.86914 2.77976 4.57405 3.17237 5.0274L5.53726 7.75813Z" fill="#171719" fill-opacity="0.8"/></svg>
+          </div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 12. Dropdown ════════════════════ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="c-idx">12</div>
+      <div class="c-meta">
+        <div class="c-name">Dropdown</div>
+        <div class="rbadges">
+          <span class="rbadge">줄바꿈 <b>🟢 허용</b> (항목 내부)</span>
+          <span class="rbadge rt-f wide">너비 · <b>너비 고정</b></span>
+          <span class="rbadge">비고 <b>번역 줄임 권장</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">너비 고정 · 항목 텍스트는 줄바꿈 허용</div>
+      <div class="demo-row">
+        <div class="dropdown">
+          <div class="dd-item t" data-ko="학습자 정보 수정" data-en="Edit Learner Information">학습자 정보 수정</div>
+          <div class="dd-item hover t" data-ko="학습 기간 연장" data-en="Extend Learning Period">학습 기간 연장</div>
+          <div class="dd-item t" data-ko="수료증 발급" data-en="Issue Certificate of Completion">수료증 발급</div>
+          <div class="dd-item t" data-ko="학습자 목록 내보내기" data-en="Export Learner List to Excel">학습자 목록 내보내기</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 13. Switch ════════════════════ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="c-idx">13</div>
+      <div class="c-meta">
+        <div class="c-name">Switch</div>
+        <div class="rbadges">
+          <span class="rbadge">줄바꿈 <b>❌ 금지</b></span>
+          <span class="rbadge">넘침 처리 <b>너비 확장</b></span>
+          <span class="rbadge rt-w wide">너비 · <b>단일: 자동 확장 · 인라인: row wrap 허용</b></span>
+          <span class="rbadge">비고 <b>번역 줄임 권장</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">단일 · 자동 확장</div>
+      <div class="resize-box" data-min="320" style="width:fit-content">
+        <span class="rb-tag">단일</span>
+        <div class="rb-content of-visible">
+          <label class="switch-row on">
+            <svg class="sw-svg" width="40" height="20" viewBox="0 0 40 20" fill="none">
+              <path d="M0 10C0 4.47715 4.47715 0 10 0H30C35.5228 0 40 4.47715 40 10V10C40 15.5228 35.5228 20 30 20H10C4.47715 20 0 15.5228 0 10V10Z" fill="#46474C"/>
+              <path d="M14 7L8.5 12.5L6 10" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="30" cy="10" r="8" fill="white"/>
+            </svg>
+            <span class="switch-lbl t" data-ko="자동 갱신" data-en="Auto-Renewal Subscription">자동 갱신</span>
+          </label>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">인라인 · row wrap 허용</div>
+      <div class="resize-box" data-min="320" style="width:400px">
+        <span class="rb-tag">인라인</span>
+        <div class="rb-content of-visible">
+          <div class="switch-group">
+            <label class="switch-row on">
+              <svg class="sw-svg" width="40" height="20" viewBox="0 0 40 20" fill="none">
+                <path d="M0 10C0 4.47715 4.47715 0 10 0H30C35.5228 0 40 4.47715 40 10V10C40 15.5228 35.5228 20 30 20H10C4.47715 20 0 15.5228 0 10V10Z" fill="#46474C"/>
+                <path d="M14 7L8.5 12.5L6 10" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="30" cy="10" r="8" fill="white"/>
+              </svg>
+              <span class="switch-lbl t" data-ko="이메일 알림" data-en="Email Notifications">이메일 알림</span>
+            </label>
+            <label class="switch-row">
+              <svg class="sw-svg" width="40" height="20" viewBox="0 0 40 20" fill="none">
+                <path d="M0 10C0 4.47715 4.47715 0 10 0H30C35.5228 0 40 4.47715 40 10V10C40 15.5228 35.5228 20 30 20H10C4.47715 20 0 15.5228 0 10V10Z" fill="#EAEBEC"/>
+                <circle cx="10" cy="10" r="8" fill="white"/>
+                <path d="M33 7L27 13M27 7L33 13" stroke="#171719" stroke-opacity="0.25" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span class="switch-lbl t" data-ko="SMS 알림" data-en="SMS Notifications">SMS 알림</span>
+            </label>
+            <label class="switch-row on">
+              <svg class="sw-svg" width="40" height="20" viewBox="0 0 40 20" fill="none">
+                <path d="M0 10C0 4.47715 4.47715 0 10 0H30C35.5228 0 40 4.47715 40 10V10C40 15.5228 35.5228 20 30 20H10C4.47715 20 0 15.5228 0 10V10Z" fill="#46474C"/>
+                <path d="M14 7L8.5 12.5L6 10" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="30" cy="10" r="8" fill="white"/>
+              </svg>
+              <span class="switch-lbl t" data-ko="앱 푸시" data-en="App Push Notifications">앱 푸시</span>
+            </label>
+          </div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 14. Tabs ════════════════════ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="c-idx">14</div>
+      <div class="c-meta">
+        <div class="c-name">Tabs</div>
+        <div class="rbadges">
+          <span class="rbadge">줄바꿈 <b>❌ 금지</b></span>
+          <span class="rbadge">넘침 처리 <b>너비 확장</b></span>
+          <span class="rbadge rt-s wide">너비 · <b>자동 확장 또는 overflow 활성화</b></span>
+          <span class="rbadge">비고 <b>번역 줄임 권장</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">자동 확장 · 컨테이너(최소 320px)보다 컴포넌트가 작아 스크롤이 필요 없는 경우</div>
+      <div class="resize-box" data-min="320" style="width:320px">
+        <span class="rb-tag">확장 · 스크롤 불필요</span>
+        <div class="rb-content of-visible">
+          <div class="tabs no-scroll">
+            <div class="tab-item on t" data-ko="전체 학습자" data-en="All Learners">전체 학습자</div>
+            <div class="tab-item t" data-ko="활성" data-en="Active">활성</div>
+          </div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">overflow 활성화 (공간 부족 시 · 좌우 화살표 + 가로 스크롤)</div>
+      <div class="resize-box" data-min="320" style="width:340px">
+        <span class="rb-tag">overflow</span>
+        <div class="rb-content of-visible">
+          <div class="tabs-overflow-wrap">
+            <div class="tab-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="tabs scrollable">
+              <div class="tab-item on t" data-ko="전체 학습자" data-en="All Learners">전체 학습자</div>
+              <div class="tab-item t" data-ko="활성" data-en="Active">활성</div>
+              <div class="tab-item t" data-ko="완료" data-en="Completed">완료</div>
+              <div class="tab-item t" data-ko="학습 대기" data-en="Pending">학습 대기</div>
+              <div class="tab-item t" data-ko="비활성" data-en="Inactive">비활성</div>
+            </div>
+            <div class="tab-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 15. Toast ════════════════════ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="c-idx">15</div>
+      <div class="c-meta">
+        <div class="c-name">Toast</div>
+        <div class="rbadges">
+          <span class="rbadge">줄바꿈 <b>🟢 허용</b></span>
+          <span class="rbadge rt-f wide">너비 · <b>너비 고정</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">너비 고정 400px · 한국어는 1줄, 영어로 번역 시 2줄로 줄바꿈되는 경우</div>
+      <div class="demo-row">
+        <div class="toast tst-success">
+          <span class="toast-ic">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2L4.8 8.5L9.5 3.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <div class="toast-text t" data-ko="학습자 등록이 완료되었습니다." data-en="The learner has been successfully registered and added to your course roster.">학습자 등록이 완료되었습니다.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 16. Tooltip ════════════════════ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="c-idx">16</div>
+      <div class="c-meta">
+        <div class="c-name">Tooltip</div>
+        <div class="rbadges">
+          <span class="rbadge">줄바꿈 <b>❌ 금지</b></span>
+          <span class="rbadge">넘침 처리 <b>너비 확장</b></span>
+          <span class="rbadge rt-e wide">너비 · <b>자동 확장</b></span>
+          <span class="rbadge">비고 <b>번역 줄임 권장</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">자동 확장 · 단어 1개 · 트리거와 여백 0, 화살표는 임의 위치 변경 금지</div>
+      <div class="demo-row">
+        <div class="tt-demo">
+          <div class="tt-trigger">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2.5L11 6.6L15.5 7.3L12.3 10.4L13 15L9 12.8L5 15L5.7 10.4L2.5 7.3L7 6.6L9 2.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="tt-bubble t" data-ko="즐겨찾기" data-en="Favorites">즐겨찾기</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 17. Accordion ════════════════════ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="c-idx">17</div>
+      <div class="c-meta">
+        <div class="c-name">Accordion <small>제목</small></div>
+        <div class="rbadges">
+          <span class="rbadge">줄바꿈 <b>🟢 허용</b></span>
+          <span class="rbadge rt-b wide">너비 · <b>컨테이너 너비 100%</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">컨테이너 너비 100% · 제목은 줄바꿈되어 2줄까지 늘어남</div>
+      <div class="resize-box" data-min="320" style="width:460px">
+        <span class="rb-tag">open</span>
+        <div class="rb-content of-visible">
+          <div class="accordion">
+            <div class="acc-hd open" onclick="this.classList.toggle('open');this.nextElementSibling.style.display=this.classList.contains('open')?'block':'none'">
+              <span class="badge bd-secondary acc-cat">공지</span>
+              <span class="acc-title t" data-ko="학습 현황 상세 분석 보고서 안내" data-en="Guide to the Detailed Learning Status Analysis Report">학습 현황 상세 분석 보고서 안내</span>
+              <span class="acc-meta">
+                <span class="badge bd-brand t" data-ko="필독" data-en="Must Read">필독</span>
+                <span class="acc-time">2024.09.01</span>
+              </span>
+              <span class="acc-icons">
+                <span class="acc-icon-btn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 8.5L7 5L10.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="acc-icon-btn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="3.5" r="1"/><circle cx="7" cy="7" r="1"/><circle cx="7" cy="10.5" r="1"/></svg></span>
+              </span>
+            </div>
+            <div class="acc-body">
+              <span class="t" data-ko="이 보고서는 학습자의 수강 이력, 진도율, 학습 완료 여부 등을 종합적으로 분석한 결과를 포함합니다." data-en="This report contains a comprehensive analysis of learner enrollment history, progress rates, and course completion status.">이 보고서는 학습자의 수강 이력, 진도율, 학습 완료 여부 등을 종합적으로 분석한 결과를 포함합니다.</span>
+            </div>
+          </div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 18. Board ════════════════════ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="c-idx">18</div>
+      <div class="c-meta">
+        <div class="c-name">Board <small>제목</small></div>
+        <div class="rbadges">
+          <span class="rbadge">줄바꿈 <b>🟢 허용</b></span>
+          <span class="rbadge rt-b wide">너비 · <b>컨테이너 너비 100%</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">컨테이너 너비 100% · 카테고리 뱃지 통일 · 제목 줄바꿈, 날짜는 우측 고정</div>
+      <div class="resize-box" data-min="320" style="width:460px">
+        <span class="rb-tag">board-list</span>
+        <div class="rb-content of-visible">
+          <div class="board-list">
+            <div class="board-row">
+              <span class="badge bd-secondary board-cat">공지</span>
+              <span class="board-title t" data-ko="신규 학습 콘텐츠 안내: 2024년 3분기 필수 이수 과정 목록 업데이트" data-en="New Learning Content Guide: Updated List of Required Courses for Q3 2024">신규 학습 콘텐츠 안내: 2024년 3분기 필수 이수 과정 목록 업데이트</span>
+              <span class="board-time">2024.09.01 14:30</span>
+            </div>
+            <div class="board-row">
+              <span class="badge bd-secondary board-cat">공지</span>
+              <span class="board-title t" data-ko="추석 연휴 학습 지원센터 운영 안내" data-en="Support Center Operating Hours During the Chuseok Holiday">추석 연휴 학습 지원센터 운영 안내</span>
+              <span class="board-time">2024.09.10 09:00</span>
+            </div>
+          </div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 19. Form ════════════════════ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="c-idx">19</div>
+      <div class="c-meta">
+        <div class="c-name">Form <small>Label</small></div>
+        <div class="rbadges">
+          <span class="rbadge">줄바꿈 <b>🟢 허용</b></span>
+          <span class="rbadge rt-b wide">너비 · <b>상하 배치(기본) 또는 좌우 배치 — 좌우 시 가장 긴 레이블 기준 정렬</b></span>
+          <span class="rbadge">비고 <b>번역 줄임 권장</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">레이블-인풋 상하 배치 (실제 HDS form 구조) <span class="note">— label 아래 input, 필드셋 간 20px, label-input 간 8px</span></div>
+      <div class="resize-box" data-min="320" style="width:400px">
+        <span class="rb-tag">label-top</span>
+        <div class="rb-content of-visible">
+          <div class="form-stack">
+            <div class="form-set">
+              <label class="form-label"><span class="t" data-ko="이름" data-en="Name">이름</span><span class="form-req">*</span></label>
+              <div class="form-input t" data-ko="이름을 입력하세요" data-en="Enter your name">이름을 입력하세요</div>
+            </div>
+            <div class="form-set">
+              <label class="form-label"><span class="t" data-ko="이메일 주소" data-en="Email Address">이메일 주소</span><span class="form-req">*</span></label>
+              <div class="form-input t" data-ko="example@company.com" data-en="example@company.com">example@company.com</div>
+            </div>
+            <div class="form-set">
+              <label class="form-label"><span class="t" data-ko="학습 시작 희망일" data-en="Preferred Learning Start Date">학습 시작 희망일</span></label>
+              <div class="form-input t" data-ko="날짜 선택" data-en="Select a date">날짜 선택</div>
+            </div>
+          </div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">레이블-인풋 좌우 배치 <span class="note">— 레이블 컬럼은 가장 긴 레이블 기준으로 일괄 정렬</span></div>
+      <div class="resize-box" data-min="320" style="width:480px">
+        <span class="rb-tag">label-left</span>
+        <div class="rb-content of-visible">
+          <div class="form-grid">
+            <label class="form-label"><span class="t" data-ko="이름" data-en="Name">이름</span><span class="form-req">*</span></label>
+            <div class="form-input t" data-ko="이름을 입력하세요" data-en="Enter your name">이름을 입력하세요</div>
+            <label class="form-label"><span class="t" data-ko="이메일 주소" data-en="Email Address">이메일 주소</span><span class="form-req">*</span></label>
+            <div class="form-input t" data-ko="example@company.com" data-en="example@company.com">example@company.com</div>
+            <label class="form-label"><span class="t" data-ko="학습 시작 희망일" data-en="Preferred Learning Start Date">학습 시작 희망일</span></label>
+            <div class="form-input t" data-ko="날짜 선택" data-en="Select a date">날짜 선택</div>
+          </div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 20. Modal ════════════════════ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="c-idx">20</div>
+      <div class="c-meta">
+        <div class="c-name">Modal <small>타이틀</small></div>
+        <div class="rbadges">
+          <span class="rbadge">줄바꿈 <b>🟢 허용</b></span>
+          <span class="rbadge rt-f wide">너비 · <b>너비 고정</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">너비 고정(sm=480px) · 타이틀은 줄바꿈되어 2줄까지 늘어남</div>
+      <div class="demo-row">
+        <div class="modal-preview-static">
+          <div class="modal-hd">
+            <div class="modal-title t" data-ko="학습자 신규 등록 및 권한 설정" data-en="Register New Learner and Configure Access Permissions">학습자 신규 등록 및 권한 설정</div>
+            <button class="modal-close">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 5L15 15M15 5L5 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          <div class="modal-bd t" data-ko="본문 콘텐츠 영역" data-en="Content slot area">본문 콘텐츠 영역</div>
+          <div class="modal-ft">
+            <button class="btn btn-outline btn-lg t" data-ko="취소" data-en="Cancel">취소</button>
+            <button class="btn btn-primary btn-lg t" data-ko="등록하기" data-en="Register">등록하기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 21. Table ════════════════════ -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="c-idx">21</div>
+      <div class="c-meta">
+        <div class="c-name">Table <small>Header · Row</small></div>
+        <div class="rbadges">
+          <span class="rbadge">Header 줄바꿈 <b>❌ 금지</b></span>
+          <span class="rbadge rt-e wide">Header 너비 · <b>컬럼 확장 또는 가로 스크롤</b></span>
+          <span class="rbadge">Row 줄바꿈 <b>🟢 허용</b></span>
+          <span class="rbadge">비고 <b>*컴포넌트 사용 시 해당 규칙 따름</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">컬럼 너비 확장 · 헤더/셀 텍스트가 줄바꿈 없이 컬럼을 밀어냄</div>
+      <div class="table-wrap">
+        <table class="hds-table expand">
+          <thead><tr>
+            <th class="t" data-ko="이름" data-en="Name">이름</th>
+            <th class="t" data-ko="소속 부서" data-en="Department">소속 부서</th>
+            <th class="t" data-ko="학습 기간" data-en="Learning Period">학습 기간</th>
+            <th class="t" data-ko="상태" data-en="Status">상태</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td><div class="td-name t" data-ko="홍길동" data-en="Gildong Hong">홍길동</div><div class="td-sub">gildong@company.com</div></td>
+              <td class="t" data-ko="인사팀" data-en="Human Resources Department">인사팀</td>
+              <td class="t" data-ko="2024.01 – 03" data-en="Jan – Mar 2024">2024.01 – 03</td>
+              <td><div class="td-badges"><span class="badge bd-success t" data-ko="완료" data-en="Completed">완료</span><span class="badge bd-brand t" data-ko="우수 수료" data-en="Outstanding Achievement">우수 수료</span></div></td>
+            </tr>
+            <tr>
+              <td><div class="td-name t" data-ko="김민지" data-en="Minji Kim">김민지</div><div class="td-sub">minji.k@company.com</div></td>
+              <td class="t" data-ko="마케팅팀" data-en="Marketing &amp; Communications Team">마케팅팀</td>
+              <td class="t" data-ko="2024.02 – 04" data-en="Feb – Apr 2024">2024.02 – 04</td>
+              <td><div class="td-badges"><span class="badge bd-warning t" data-ko="진행 중" data-en="In Progress">진행 중</span></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">가로 스크롤 · 컨테이너보다 테이블이 넓으면 스크롤 발생</div>
+      <div class="resize-box" data-min="320" style="width:460px">
+        <span class="rb-tag">scroll</span>
+        <div class="rb-content of-visible">
+          <div class="table-wrap table-scroll">
+            <table class="hds-table">
+              <thead><tr>
+                <th class="t" data-ko="이름" data-en="Name">이름</th>
+                <th class="t" data-ko="소속 부서" data-en="Department">소속 부서</th>
+                <th class="t" data-ko="학습 기간" data-en="Learning Period">학습 기간</th>
+                <th class="t" data-ko="상태" data-en="Status">상태</th>
+                <th class="t" data-ko="알림" data-en="Notifications">알림</th>
+              </tr></thead>
+              <tbody>
+                <tr>
+                  <td><div class="td-name t" data-ko="홍길동" data-en="Gildong Hong">홍길동</div><div class="td-sub">gildong@company.com</div></td>
+                  <td class="t" data-ko="인사팀" data-en="Human Resources Department">인사팀</td>
+                  <td class="t" data-ko="2024.01 – 03" data-en="Jan – Mar 2024">2024.01 – 03</td>
+                  <td><div class="td-badges"><span class="badge bd-success t" data-ko="완료" data-en="Completed">완료</span></div></td>
+                  <td>
+                    <svg width="40" height="20" viewBox="0 0 40 20" fill="none">
+                      <path d="M0 10C0 4.47715 4.47715 0 10 0H30C35.5228 0 40 4.47715 40 10V10C40 15.5228 35.5228 20 30 20H10C4.47715 20 0 15.5228 0 10V10Z" fill="#46474C"/>
+                      <path d="M14 7L8.5 12.5L6 10" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                      <circle cx="30" cy="10" r="8" fill="white"/>
+                    </svg>
+                  </td>
+                </tr>
+                <tr>
+                  <td><div class="td-name t" data-ko="이서준" data-en="Seojun Lee">이서준</div><div class="td-sub">seojun.l@company.com</div></td>
+                  <td class="t" data-ko="마케팅팀" data-en="Marketing &amp; Communications Team">마케팅팀</td>
+                  <td class="t" data-ko="2024.03 – 05" data-en="Mar – May 2024">2024.03 – 05</td>
+                  <td><div class="td-badges"><span class="badge bd-normal t" data-ko="미시작" data-en="Not Started">미시작</span></div></td>
+                  <td>
+                    <svg width="40" height="20" viewBox="0 0 40 20" fill="none">
+                      <path d="M0 10C0 4.47715 4.47715 0 10 0H30C35.5228 0 40 4.47715 40 10V10C40 15.5228 35.5228 20 30 20H10C4.47715 20 0 15.5228 0 10V10Z" fill="#EAEBEC"/>
+                      <circle cx="10" cy="10" r="8" fill="white"/>
+                      <path d="M33 7L27 13M27 7L33 13" stroke="#171719" stroke-opacity="0.25" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<div class="foot">HDS 다국어 대응 가이드 · Confluence 기준 문서 기반 · 색상/간격/타이포그래피/아이콘은 Figma HDS 라이브러리 실측치 반영</div>
+
+<script>
+var lang='ko';
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.t[data-ko]').forEach(function(el){el.textContent=l==='ko'?el.dataset.ko:el.dataset.en});
+  document.querySelectorAll('.ph[data-ko-p]').forEach(function(el){el.placeholder=l==='ko'?el.dataset.koP:el.dataset.enP});
+  document.getElementById('btn-ko').className='langbtn'+(l==='ko'?' on':'');
+  document.getElementById('btn-en').className='langbtn'+(l==='en'?' on':'');
+}
+
+function toggleSelectDemo(e){
+  e.stopPropagation();
+  document.getElementById('selectDemo').classList.toggle('open');
+}
+document.addEventListener('click',function(){
+  var s=document.getElementById('selectDemo');
+  if(s) s.classList.remove('open');
+});
+
+function initResizers(){
+  document.querySelectorAll('.resize-box').forEach(function(box){
+    var handle=box.querySelector('.resize-handle');
+    var badge=box.querySelector('.rb-badge');
+    var min=parseInt(box.dataset.min||'320',10);
+    var max=parseInt(box.dataset.max||'900',10);
+    function updateBadge(){badge.textContent=Math.round(box.getBoundingClientRect().width)+'px'}
+    var dragging=false,startX=0,startW=0;
+    handle.addEventListener('pointerdown',function(e){
+      dragging=true;startX=e.clientX;startW=box.getBoundingClientRect().width;
+      handle.classList.add('dragging');
+      try{handle.setPointerCapture(e.pointerId)}catch(err){}
+      e.preventDefault();
+    });
+    handle.addEventListener('pointermove',function(e){
+      if(!dragging)return;
+      var w=Math.max(min,Math.min(max,startW+(e.clientX-startX)));
+      box.style.width=w+'px';
+      updateBadge();
+    });
+    function stop(){if(!dragging)return;dragging=false;handle.classList.remove('dragging')}
+    handle.addEventListener('pointerup',stop);
+    handle.addEventListener('pointercancel',stop);
+    if(window.ResizeObserver){new ResizeObserver(updateBadge).observe(box)}
+    updateBadge();
+  });
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  setLang('ko');
+  initResizers();
+});
+</script>
+</body>
+</html>
