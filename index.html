@@ -356,7 +356,7 @@ a{color:inherit}
 
 /* ══════════ HDS Toast (한 문장, 균일 굵기) ══════════ */
 .toast{
-  display:flex;gap:8px;width:400px;max-width:100%;padding:12px;border-radius:var(--r-sm);
+  display:flex;gap:8px;width:100%;max-width:400px;padding:12px;border-radius:var(--r-sm);
   background:rgba(255,255,255,.88);align-items:center;
 }
 .toast-ic{flex-shrink:0;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;
@@ -465,7 +465,7 @@ table.hds-table{width:100%;border-collapse:collapse;min-width:640px}
   padding:12px 20px;border-bottom:1px solid var(--line-layout);white-space:nowrap;
 }
 .hds-table td{padding:16px 20px;border-bottom:1px solid var(--line-layout);font-size:16px;color:var(--ink100);
-  vertical-align:middle}
+  vertical-align:middle;background:var(--surface)}
 .hds-table tr:last-child td{border-bottom:none}
 .hds-table.expand th,.hds-table.expand td{white-space:normal}
 .hds-table.expand{min-width:0}
@@ -654,7 +654,7 @@ table.hds-table{width:100%;border-collapse:collapse;min-width:640px}
       </div>
     </div>
     <div class="c-sec">
-      <div class="sec-lbl">자동 확장 · 컨테이너(최소 320px)보다 컴포넌트가 작아 스크롤/줄바꿈이 필요 없는 경우</div>
+      <div class="sec-lbl">자동 확장 · 컨테이너보다 컴포넌트가 작아 스크롤/줄바꿈이 필요 없는 경우</div>
       <div class="resize-box" data-min="320" style="width:320px">
         <span class="rb-tag">확장 · 스크롤 불필요</span>
         <div class="rb-content of-visible">
@@ -727,7 +727,7 @@ table.hds-table{width:100%;border-collapse:collapse;min-width:640px}
       </div>
     </div>
     <div class="c-sec">
-      <div class="sec-lbl">인라인 · row wrap 허용 (필터 모달 내부)</div>
+      <div class="sec-lbl">인라인 · row wrap 허용</div>
       <div class="resize-box" data-min="320" style="width:420px">
         <span class="rb-tag">인라인</span>
         <div class="rb-content of-visible">
@@ -769,7 +769,7 @@ table.hds-table{width:100%;border-collapse:collapse;min-width:640px}
       </div>
     </div>
     <div class="c-sec">
-      <div class="sec-lbl">인라인 · row wrap 허용 (보유 스킬 목록)</div>
+      <div class="sec-lbl">인라인 · row wrap 허용</div>
       <div class="resize-box" data-min="320" style="width:420px">
         <span class="rb-tag">인라인</span>
         <div class="rb-content of-visible">
@@ -805,7 +805,7 @@ table.hds-table{width:100%;border-collapse:collapse;min-width:640px}
         <span class="rb-tag">단일</span>
         <div class="rb-content of-visible">
           <div class="input-tb">
-            <input type="text" class="ph" data-ko-p="학습자 이름, 이메일 검색" data-en-p="Search by name or email" placeholder="학습자 이름, 이메일 검색">
+            <input type="text" class="ph" data-ko-p="검색" data-en-p="Search" placeholder="검색">
             <div class="trail t" data-ko="검색" data-en="Search">검색</div>
           </div>
         </div>
@@ -838,6 +838,16 @@ table.hds-table{width:100%;border-collapse:collapse;min-width:640px}
             <label class="radio-item"><span class="radio-dot"></span><span class="radio-lbl t" data-ko="관리자" data-en="Administrator">관리자</span></label>
             <label class="radio-item"><span class="radio-dot"></span><span class="radio-lbl t" data-ko="현장 실습 참여자" data-en="Field Practicum Participant">현장 실습 참여자</span></label>
           </div>
+        </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
+      </div>
+    </div>
+    <div class="c-sec">
+      <div class="sec-lbl">단일 · 줄바꿈 허용</div>
+      <div class="resize-box" data-min="320" style="width:360px">
+        <span class="rb-tag">단일</span>
+        <div class="rb-content of-visible">
+          <label class="radio-item on"><span class="radio-dot"></span><span class="radio-lbl t" data-ko="개별 학습자 학습 시작일 ~ 학습 종료일" data-en="Individual learner's learning start date ~ learning end date">개별 학습자 학습 시작일 ~ 학습 종료일</span></label>
         </div>
         <div class="resize-handle"></div><span class="rb-badge"></span>
       </div>
@@ -919,7 +929,7 @@ table.hds-table{width:100%;border-collapse:collapse;min-width:640px}
       </div>
     </div>
     <div class="c-sec">
-      <div class="sec-lbl">선택된 옵션 · 내부 chip은 row wrap · x 아이콘은 텍스트 우측</div>
+      <div class="sec-lbl">row wrap</div>
       <div class="resize-box" data-min="320" style="width:320px">
         <span class="rb-tag">filled</span>
         <div class="rb-content of-visible">
@@ -983,12 +993,12 @@ table.hds-table{width:100%;border-collapse:collapse;min-width:640px}
         <span class="rb-tag">단일</span>
         <div class="rb-content of-visible">
           <label class="switch-row on">
+            <span class="switch-lbl t" data-ko="자동 갱신" data-en="Auto-Renewal Subscription">자동 갱신</span>
             <svg class="sw-svg" width="40" height="20" viewBox="0 0 40 20" fill="none">
               <path d="M0 10C0 4.47715 4.47715 0 10 0H30C35.5228 0 40 4.47715 40 10V10C40 15.5228 35.5228 20 30 20H10C4.47715 20 0 15.5228 0 10V10Z" fill="#46474C"/>
               <path d="M14 7L8.5 12.5L6 10" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
               <circle cx="30" cy="10" r="8" fill="white"/>
             </svg>
-            <span class="switch-lbl t" data-ko="자동 갱신" data-en="Auto-Renewal Subscription">자동 갱신</span>
           </label>
         </div>
         <div class="resize-handle"></div><span class="rb-badge"></span>
@@ -1001,28 +1011,28 @@ table.hds-table{width:100%;border-collapse:collapse;min-width:640px}
         <div class="rb-content of-visible">
           <div class="switch-group">
             <label class="switch-row on">
+              <span class="switch-lbl t" data-ko="이메일 알림" data-en="Email Notifications">이메일 알림</span>
               <svg class="sw-svg" width="40" height="20" viewBox="0 0 40 20" fill="none">
                 <path d="M0 10C0 4.47715 4.47715 0 10 0H30C35.5228 0 40 4.47715 40 10V10C40 15.5228 35.5228 20 30 20H10C4.47715 20 0 15.5228 0 10V10Z" fill="#46474C"/>
                 <path d="M14 7L8.5 12.5L6 10" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
                 <circle cx="30" cy="10" r="8" fill="white"/>
               </svg>
-              <span class="switch-lbl t" data-ko="이메일 알림" data-en="Email Notifications">이메일 알림</span>
             </label>
             <label class="switch-row">
+              <span class="switch-lbl t" data-ko="SMS 알림" data-en="SMS Notifications">SMS 알림</span>
               <svg class="sw-svg" width="40" height="20" viewBox="0 0 40 20" fill="none">
                 <path d="M0 10C0 4.47715 4.47715 0 10 0H30C35.5228 0 40 4.47715 40 10V10C40 15.5228 35.5228 20 30 20H10C4.47715 20 0 15.5228 0 10V10Z" fill="#EAEBEC"/>
                 <circle cx="10" cy="10" r="8" fill="white"/>
                 <path d="M33 7L27 13M27 7L33 13" stroke="#171719" stroke-opacity="0.25" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              <span class="switch-lbl t" data-ko="SMS 알림" data-en="SMS Notifications">SMS 알림</span>
             </label>
             <label class="switch-row on">
+              <span class="switch-lbl t" data-ko="앱 푸시" data-en="App Push Notifications">앱 푸시</span>
               <svg class="sw-svg" width="40" height="20" viewBox="0 0 40 20" fill="none">
                 <path d="M0 10C0 4.47715 4.47715 0 10 0H30C35.5228 0 40 4.47715 40 10V10C40 15.5228 35.5228 20 30 20H10C4.47715 20 0 15.5228 0 10V10Z" fill="#46474C"/>
                 <path d="M14 7L8.5 12.5L6 10" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
                 <circle cx="30" cy="10" r="8" fill="white"/>
               </svg>
-              <span class="switch-lbl t" data-ko="앱 푸시" data-en="App Push Notifications">앱 푸시</span>
             </label>
           </div>
         </div>
@@ -1046,7 +1056,7 @@ table.hds-table{width:100%;border-collapse:collapse;min-width:640px}
       </div>
     </div>
     <div class="c-sec">
-      <div class="sec-lbl">자동 확장 · 컨테이너(최소 320px)보다 컴포넌트가 작아 스크롤이 필요 없는 경우</div>
+      <div class="sec-lbl">자동 확장 · 컨테이너보다 컴포넌트가 작아 스크롤이 필요 없는 경우</div>
       <div class="resize-box" data-min="320" style="width:320px">
         <span class="rb-tag">확장 · 스크롤 불필요</span>
         <div class="rb-content of-visible">
@@ -1093,14 +1103,18 @@ table.hds-table{width:100%;border-collapse:collapse;min-width:640px}
       </div>
     </div>
     <div class="c-sec">
-      <div class="sec-lbl">너비 고정 400px · 한국어는 1줄, 영어로 번역 시 2줄로 줄바꿈되는 경우</div>
-      <div class="demo-row">
-        <div class="toast tst-success">
-          <span class="toast-ic">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2L4.8 8.5L9.5 3.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </span>
-          <div class="toast-text t" data-ko="학습자 등록이 완료되었습니다." data-en="The learner has been successfully registered and added to your course roster.">학습자 등록이 완료되었습니다.</div>
+      <div class="sec-lbl">줄바꿈 허용</div>
+      <div class="resize-box" data-min="320" style="width:460px">
+        <span class="rb-tag">컨테이너 · max-width 400px</span>
+        <div class="rb-content of-visible">
+          <div class="toast tst-success">
+            <span class="toast-ic">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2L4.8 8.5L9.5 3.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <div class="toast-text t" data-ko="학습자 등록이 완료되었습니다." data-en="The learner has been successfully registered and added to your course roster.">학습자 등록이 완료되었습니다.</div>
+          </div>
         </div>
+        <div class="resize-handle"></div><span class="rb-badge"></span>
       </div>
     </div>
   </div>
@@ -1120,7 +1134,7 @@ table.hds-table{width:100%;border-collapse:collapse;min-width:640px}
       </div>
     </div>
     <div class="c-sec">
-      <div class="sec-lbl">자동 확장 · 단어 1개 · 트리거와 여백 0, 화살표는 임의 위치 변경 금지</div>
+      <div class="sec-lbl">자동 확장</div>
       <div class="demo-row">
         <div class="tt-demo">
           <div class="tt-trigger">
@@ -1145,7 +1159,7 @@ table.hds-table{width:100%;border-collapse:collapse;min-width:640px}
       </div>
     </div>
     <div class="c-sec">
-      <div class="sec-lbl">컨테이너 너비 100% · 제목은 줄바꿈되어 2줄까지 늘어남</div>
+      <div class="sec-lbl">줄바꿈 허용</div>
       <div class="resize-box" data-min="320" style="width:460px">
         <span class="rb-tag">open</span>
         <div class="rb-content of-visible">
@@ -1185,7 +1199,7 @@ table.hds-table{width:100%;border-collapse:collapse;min-width:640px}
       </div>
     </div>
     <div class="c-sec">
-      <div class="sec-lbl">컨테이너 너비 100% · 카테고리 뱃지 통일 · 제목 줄바꿈, 날짜는 우측 고정</div>
+      <div class="sec-lbl">줄바꿈 허용</div>
       <div class="resize-box" data-min="320" style="width:460px">
         <span class="rb-tag">board-list</span>
         <div class="rb-content of-visible">
@@ -1221,7 +1235,7 @@ table.hds-table{width:100%;border-collapse:collapse;min-width:640px}
       </div>
     </div>
     <div class="c-sec">
-      <div class="sec-lbl">레이블-인풋 상하 배치 (실제 HDS form 구조) <span class="note">— label 아래 input, 필드셋 간 20px, label-input 간 8px</span></div>
+      <div class="sec-lbl">레이블-인풋 상하 배치</div>
       <div class="resize-box" data-min="320" style="width:400px">
         <span class="rb-tag">label-top</span>
         <div class="rb-content of-visible">
@@ -1275,7 +1289,7 @@ table.hds-table{width:100%;border-collapse:collapse;min-width:640px}
       </div>
     </div>
     <div class="c-sec">
-      <div class="sec-lbl">너비 고정(sm=480px) · 타이틀은 줄바꿈되어 2줄까지 늘어남</div>
+      <div class="sec-lbl">줄바꿈 허용</div>
       <div class="demo-row">
         <div class="modal-preview-static">
           <div class="modal-hd">
